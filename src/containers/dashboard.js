@@ -38,6 +38,7 @@ const Dashboard = props => {
                 let token = localStorage.getItem('token');
                 let response = await axios.get(props.match.url, { headers: { "Authorization": token } });
                 setLoading({type: 'default', value: false});
+                console.log(response.data);
                 let amt = limits[response.data.writer.lv][1] * response.data.writer.xp;
                 console.log(amt);
                 console.log(response.data.writer.cashed);

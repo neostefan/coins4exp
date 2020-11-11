@@ -31,7 +31,6 @@ const Styles = Styled(Container)`
     .popover {
         max-width: none;
     }
-    
 `;
 
 const Reducer = (state, action) => {
@@ -74,11 +73,14 @@ const Reactions = props => {
         if(auth.isLoggedIn) {
             // * checking if user has voted before
             if(sponsor) {
+                //* update the state to show they have voted before
                 dispatch({ type: 'AUTHORIZED_VOTED' });
             } else {
+                //* call the vote function since they have not voted before
                 props.vote(type);
             }
         } else {
+            //* updating the state to prompt the user to login
             dispatch({ type: 'NOTAUTHORIZED_VOTING' });
         }
     }

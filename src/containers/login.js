@@ -1,8 +1,9 @@
 import React from 'react';
-import { Formik } from 'formik';
-import { useSetRecoilState } from 'recoil';
 import Styled from 'styled-components';
 import * as Yup from 'yup';
+import { Formik } from 'formik';
+import { useSetRecoilState } from 'recoil';
+import { withRouter } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -16,7 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '../components/button';
 import Brbutton from '../components/brand_btn';
 import styles from '../themes/theme';
-import axios from '../axios-auth';
+import axios from '../axios-inst';
 import { status } from '../store/atoms';
 
 const Styling = Styled(Container)`
@@ -98,14 +99,29 @@ const LogIn = props => {
         password: Yup.string().required().trim().matches('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})', 'min of 8 characters and mix of numbers and upper and lowercase letters')
     });
 
-    let googleHandler = () => {
-        console.log(props);
+    let googleHandler = async () => {
+        try {
+            let response = await axios.post('/auth', { url: props.match.url + props.location.search });
+            if(response.data.msg) {
+                window.open("http://localhost:5000/auth", "_self");
+            }
+        } catch(e) {
+            if(e.response) {
+                dispatch({type: 'ERROR_FOUND', err: e.response.data.error});
+            } else if(e.request) {
+                dispatch({type: 'ERROR_FOUND', err: e.request.data.error});
+            } else {
+                dispatch({type: 'ERROR_FOUND', err: 'Network Error'});
+            }
+        }
+        
     }
 
     let submitHandler = async (values, actions) => {
         try {
             dispatch({type: 'REQUESTING_DATA'});
             let response = await axios.post('/login', values);
+            console.log(response.data);
             let expirationTime = new Date(new Date().getTime() + response.data.expiresIn * 1000);
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('expires', expirationTime);
@@ -197,4 +213,4 @@ const LogIn = props => {
     );
 }
 
-export default LogIn;
+export default withRouter(LogIn);

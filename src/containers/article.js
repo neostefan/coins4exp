@@ -60,11 +60,14 @@ const Article = props => {
         try {
             let data = { type: type };
             let token = localStorage.getItem('token');
-            let response = axios.post(props.match.url + props.location.search, data, { headers: { "Authorization": token } });
-            //! check what type of response i am sending back and update the reactions appropriately
-            console.log(response.data);
+            let response = await axios.post(props.match.url + props.location.search, data, { headers: { "Authorization": token } });
+            
+            //* setting the reaction data 
+            setReaction({ upvote: response.data.post.upvotes, downvote: response.data.post.downvotes,
+                voters: response.data.post.sponsors
+            });
         } catch(e) {
-
+            
         }
     }
 
@@ -89,7 +92,7 @@ const Article = props => {
                                 readOnly={true}
                                 editorState={editorState}
                                 blockRendererFn={myBlockRenderFn}/>
-                                <div className="d-flex mt-4 mb-2">
+                                <div className="d-flex mt-5 mb-2">
                                     <Reactions reaction={reaction} vote={onVote}/>
                                 </div>
                             </Aux>

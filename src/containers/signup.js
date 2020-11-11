@@ -13,7 +13,7 @@ import Spinner from 'react-bootstrap/Spinner';
 
 import Button from '../components/button';
 import styles from '../themes/theme';
-import axios from '../axios-auth';
+import axios from '../axios-inst';
 
 const Styling = Styled(Container)`
     .card {
@@ -98,11 +98,13 @@ const SignUp = props => {
         wallet: Yup.string().required().matches('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})')
     });
 
+    let forgotPasswordHandler = () => props.history.push('/forgot-password')
+
     let submitHandler = async (values, actions) => {
         try {
             dispatch({type: 'REQUESTING_DATA'});
             let response = await axios.post('/signup', values);
-            console.log(response.data);
+            dispatch({ type: 'MSG_FOUND', msg: response.data.msg });
         } catch (e) {
             if(e.response) {
                 dispatch({type: 'ERROR_FOUND', err: e.response.data.error});
@@ -181,7 +183,7 @@ const SignUp = props => {
                                     value={values.password}/>
                                     {errors.password && touched.password ? <Form.Text>{errors.password}</Form.Text> : null }
                                 </Form.Group>
-                                <div className="d-flex justify-content-center switch mt-2 mb-2" onClick={props.history.push('/forgot-password')}>
+                                <div className="d-flex justify-content-center switch mt-2 mb-2" onClick={forgotPasswordHandler}>
                                     Forgot Password
                                 </div>
                                 <Button className="signupbtn" type="submit" text='SignUp'/>

@@ -6,7 +6,8 @@ import Article from './article';
 import Posts from './posts';
 import PostEditor from './post_editor';
 import Dashboard from './dashboard';
-import About from '../containers/about';
+import About from './about';
+import ThirdPartyAuth from './third-party-auth';
 import * as Atoms from '../store/atoms';
 import checkAuthStatus from '../util/auth-util';
 
@@ -34,7 +35,7 @@ const Routes = props => {
                 <Route path="/myposts" component={Posts}/>
                 <Route path="/post" component={Article}/>
                 <Route path="/faq" component={About}/>
-                <Route path="/" component={Dashboard}/>
+                <Route path="/d" component={Dashboard}/>
             </Switch>
         )
     } else {
@@ -43,6 +44,7 @@ const Routes = props => {
                 <Route path="/post" component={Article}/>
                 <Route path="/posts" component={Posts}/>
                 <Route path="/faq" component={About}/>
+                <Route path="/auth" component={ThirdPartyAuth}/>
                 <Route path="/" component={Posts}/>
             </Switch>
         );

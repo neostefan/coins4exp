@@ -19,6 +19,7 @@ const Styles = Styled.footer`
     margin: auto;
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
+    z-index: 2000;
 
     .opt-icon {
         &:hover {
