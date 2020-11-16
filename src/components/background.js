@@ -1,26 +1,38 @@
 import React from 'react';
 import Styled from 'styled-components';
 import Jumbotron from 'react-bootstrap/Jumbotron';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import Navbar from 'react-bootstrap/Navbar';
 
 import img from '../assets/biz2.2.jpg';
 import styles from '../themes/theme';
+import Aux from '../hoc/aux';
 
 //* altered z-index overlay from -1 to 4 and jumbo -2 to 2
 const Styles = Styled.div`
     .jumbo {
-        height: 800px;
         position: relative;
         z-index: 2;
         padding: 0;
         top: 0;
         left: 0;
+        border-radius: none;
+    }
+
+    .jumbo-nav {
+        background-image: url(${img});
+        background-size: cover;
+        background-position: top left;
+        height: 250px;
+    }
+
+    .jumbo-base {
+        height: 800px;
     }
 
     .base-img {
         width: 100%;
-        height: 800px;
+        height: 100%;
         position: absolute;
         top: 0;
         left: 0;
@@ -34,53 +46,63 @@ const Styles = Styled.div`
         }
     }
 
-    .overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        opacity: 0.5;
-        background-color: black;
-        color: white;
-        z-index: 4;
-        width: 100%;
-    }
-
     .textbox {
         position: absolute;
         top: 150px;
-        right: 20px;
-        width: 200px;
-        height: 350px;
+        right: 25px;
+        width: 25%;
+        height: 35%;
         color: ${styles.color0};
-        line-height: 30px;
-        font-size: large;
+        line-height: 50px;
+        font-size: xx-large;
         font-weight: 300;
+        padding-right: 5px;
     }
 
-    @media(max-width: 500px) {
+    @media(max-width: 750px) {
         .textbox {
+            padding-right: 5px;
+            line-height: 35px;
+            font-size: medium;
             top: 125px;
             right: 5px;
-            width: 150px;
+            width: 27%;
+        }
+
+        .jumbo-nav {
+            height: 250px;
+        }
+
+        .jumbo-base {
+            height: 500px;
         }
     }
+`;
 
-`
+const Background = props => {
+    return  (
+        <Styles>
+            { (props.location.pathname === "/") ? 
+                <Jumbotron className="jumbo jumbo-base" fluid>
+                    <Navbar className="d-flex justify-content-end">
+                        <Navbar.Brand as={Link} to="/">Coin Cryptid</Navbar.Brand>
+                    </Navbar>
+                    <Aux>
+                        <div className="d-flex textbox">
+                            Share your experiences and earn cryptocurrency tokens
+                        </div>
+                        <img className="base-img" src={img} alt="base"/> 
+                    </Aux>
+                </Jumbotron> :
 
-const Background = () => (
-   <Styles>
-       <Jumbotron className="jumbo" fluid>
-            <Navbar className="d-flex justify-content-end">
-                <Navbar.Brand as={Link} to="/">Coin Cryptid</Navbar.Brand>
-            </Navbar>
-            <div className="d-flex textbox">
-                Share your experiences and earn cryptocurrency tokens
-            </div>
-            <img className="base-img" src={img} alt="base"/>
-       </Jumbotron>
-   </Styles>
-)
+                <Jumbotron className="jumbo jumbo-nav">
+                        <Navbar className="d-flex justify-content-end">
+                        <Navbar.Brand as={Link} to="/">Coin Cryptid</Navbar.Brand>
+                    </Navbar>
+                </Jumbotron>
+            }
+        </Styles>
+    );
+}
 
-export default Background;
+export default withRouter(Background);

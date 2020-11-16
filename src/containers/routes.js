@@ -7,6 +7,7 @@ import Posts from './posts';
 import PostEditor from './post-editor';
 import Dashboard from './dashboard';
 import About from './about';
+import Landing from './landing';
 import ThirdPartyAuth from './third-party-auth';
 import * as Atoms from '../store/atoms';
 import checkAuthStatus from '../util/auth-util';
@@ -45,7 +46,7 @@ const Routes = props => {
                 <Route path="/posts" component={Posts}/>
                 <Route path="/faq" component={About}/>
                 <Route path="/auth" component={ThirdPartyAuth}/>
-                <Route path="/" component={Posts}/>
+                <Route path="/" component={Landing}/>
             </Switch>
         );
     }

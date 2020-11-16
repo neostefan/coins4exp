@@ -12,6 +12,7 @@ const Styled = styled(Modal)`
         align-items: center;
         justify-content: space-around;
         color: ${styles.color1};
+        min-height: 150px;
     }
 
     .modal-header {

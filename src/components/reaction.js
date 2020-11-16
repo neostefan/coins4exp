@@ -121,7 +121,7 @@ const Reactions = props => {
                     </Overlay>
                 </div>
             </div>
-            <Modal show={state.show} title="LogIn" isForm={true} close={toggleShow}>
+            <Modal show={state.show} title="Sign In" isForm={true} close={toggleShow}>
                 <LogIn close={toggleShow}/>
             </Modal>
         </Styles>

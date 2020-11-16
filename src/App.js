@@ -2,8 +2,8 @@ import React from 'react';
 import { RecoilRoot } from 'recoil';
 
 import Layout from './hoc/layout';
-import Footer from './components/footer';
 import Background from './components/background';
+import Footer from './components/footer';
 import Routes from './containers/routes';
 
 function App() {
@@ -13,6 +13,7 @@ function App() {
           <Background/>
           <Routes/>
         </Layout>
+        <Footer/>
       </RecoilRoot>
   );
 }

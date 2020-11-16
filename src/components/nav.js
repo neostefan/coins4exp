@@ -57,9 +57,7 @@ const Navigation = props => {
 
     let onLogOut = () => {
         setAuth({isLoggedIn: false, writerId: 0});
-        localStorage.removeItem('token');
-        localStorage.removeItem('expires');
-        props.history.push('/');
+        
     }
 
     return (
