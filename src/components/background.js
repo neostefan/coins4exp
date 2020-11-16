@@ -1,16 +1,37 @@
 import React from 'react';
 import Styled from 'styled-components';
 import Jumbotron from 'react-bootstrap/Jumbotron';
-import img from '../assets/biz.jpg';
+import { Link } from 'react-router-dom';
+import Navbar from 'react-bootstrap/Navbar';
 
-//altered z-index overlay from -1 to 4 and jumbo -2 to 2
+import img from '../assets/biz2.2.jpg';
+import styles from '../themes/theme';
+
+//* altered z-index overlay from -1 to 4 and jumbo -2 to 2
 const Styles = Styled.div`
     .jumbo {
-        background: url(${img}) no-repeat fixed bottom;
-        background-size: cover;
-        height: 200px;
+        height: 800px;
         position: relative;
         z-index: 2;
+        padding: 0;
+        top: 0;
+        left: 0;
+    }
+
+    .base-img {
+        width: 100%;
+        height: 800px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+    }
+
+    .navbar-brand {
+        color: ${styles.color0};
+        &:hover {
+            color: ${styles.color1}
+        }
     }
 
     .overlay {
@@ -29,7 +50,21 @@ const Styles = Styled.div`
     .textbox {
         position: absolute;
         top: 150px;
-        left: 20px;
+        right: 20px;
+        width: 200px;
+        height: 350px;
+        color: ${styles.color0};
+        line-height: 30px;
+        font-size: large;
+        font-weight: 300;
+    }
+
+    @media(max-width: 500px) {
+        .textbox {
+            top: 125px;
+            right: 5px;
+            width: 150px;
+        }
     }
 
 `
@@ -37,11 +72,13 @@ const Styles = Styled.div`
 const Background = () => (
    <Styles>
        <Jumbotron className="jumbo" fluid>
-           <div className="overlay">
-                <div className="textbox">
-                    <h3>CoinExp</h3>
-                </div>
-           </div>
+            <Navbar className="d-flex justify-content-end">
+                <Navbar.Brand as={Link} to="/">Coin Cryptid</Navbar.Brand>
+            </Navbar>
+            <div className="d-flex textbox">
+                Share your experiences and earn cryptocurrency tokens
+            </div>
+            <img className="base-img" src={img} alt="base"/>
        </Jumbotron>
    </Styles>
 )

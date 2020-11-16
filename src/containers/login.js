@@ -15,7 +15,7 @@ import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Button from '../components/button';
-import Brbutton from '../components/brand_btn';
+import Brbutton from '../components/brand-btn';
 import styles from '../themes/theme';
 import axios from '../axios-inst';
 import { status } from '../store/atoms';

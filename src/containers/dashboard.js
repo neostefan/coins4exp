@@ -82,7 +82,21 @@ const Dashboard = props => {
 
     let withdrawalHandler = async () => {
         //send a post withdraw req
-        setLoading({type: 'withdraw', value: true});
+        let body = {
+            amount: data.avail
+        }
+
+        let token = localStorage.getItem('token');
+
+        try {
+            setLoading({type: 'withdraw', value: true});
+            let response = await axios.post('/withdraw', body, {headers: { "Authorization": token }});
+            console.log(response.data);
+            setLoading({type: 'default', value: false});
+        } catch(e) {
+            setLoading({type: 'default', value: false});
+        }
+        
     }
 
     return (

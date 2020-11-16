@@ -68,7 +68,7 @@ const ThirdPartyAuth = props => {
         return () => {
             setStatus({isLoggedIn: true, writerId: Id});
         }
-    }, []);
+    }, [setStatus]);
 
     return (
         <Styles>

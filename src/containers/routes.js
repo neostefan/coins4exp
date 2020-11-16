@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 
 import Article from './article';
 import Posts from './posts';
-import PostEditor from './post_editor';
+import PostEditor from './post-editor';
 import Dashboard from './dashboard';
 import About from './about';
 import ThirdPartyAuth from './third-party-auth';
