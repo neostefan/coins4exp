@@ -1,6 +1,7 @@
 import React from 'react';
 import Styled from 'styled-components';
 import { Formik } from 'formik';
+import { useRouteMatch, useLocation } from 'react-router-dom';
 import { Editor, EditorState, RichUtils, convertToRaw, convertFromRaw } from 'draft-js';
 import * as Yup from 'yup';
 import Container from 'react-bootstrap/Container';
@@ -14,7 +15,6 @@ import Spinner from 'react-bootstrap/Spinner';
 import {  faAlignLeft, faAlignRight, faLink, faImage, faVideo, faAlignCenter } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import errorHandler from '../hoc/errorhandler';
 import styles from '../themes/theme';
 import axios from '../axios-inst';
 import Modal from '../components/modal';
@@ -29,7 +29,12 @@ import { toggleLink, toggleAlignment, toggleVideo, toggleImage } from '../util/d
 const Styles = Styled(Container)`
     .card {
         color: black;
-        min-height: 100px
+        min-height: 300px;
+        min-width: 300px;
+    }
+
+    .spinnero {
+        height: 300px;
     }
 
     .form-control {
@@ -122,20 +127,38 @@ const Reducer = (state, action) => {
         case 'THUMBNAIL_UPLOAD':
             return {
                 ...state,
+                loading: false,
                 src: action.src,
                 image: action.image
             }
         case 'ALERT_SEEN':
             return {
                 ...state,
+                loading: false,
                 show: false
+            }
+        case 'ERROR_OCCURRED':
+            return {
+                ...state,
+                loading: false,
+                show: true,
+                err: action.msg
             }
         default: return state;
     }
 }
 
-const PostEditor = props => {
-    let [ state, dispatch ] = React.useReducer(Reducer, { show: false, msg: null, src: '', image: null, loading: false }); 
+const PostEditor = () => {
+    let match = useRouteMatch();
+    let location = useLocation();
+    let [ state, dispatch ] = React.useReducer(Reducer, { 
+        show: false, 
+        msg: null, 
+        src: '', 
+        image: null,
+        err: null, 
+        loading: true 
+    }); 
     let [ title, setTitle ] = React.useState('');
     let [ tags, setTags ] = React.useState([]);
     let [ editorState, setEditorState ] = React.useState(() => EditorState.createEmpty(Decorators));
@@ -152,21 +175,29 @@ const PostEditor = props => {
             try {
                 dispatch({type: 'REQUESTING_DATA'});
                 let token = localStorage.getItem('token');
-                let response = await axios.get(props.match.url + props.location.search, {headers: {"Authorization": token}});
+                let response = await axios.get(match.url + location.search, {headers: {"Authorization": token}});
                 let contentState = convertFromRaw(JSON.parse(response.data.post.content));
                 setTitle(response.data.post.title);
                 setTags(response.data.post.tags);
                 setEditorState(() => EditorState.createWithContent(contentState, Decorators));
                 dispatch({type: 'GOT_RESPONSE', msg: null});
             } catch (e) { 
-
+                if(e.response) {
+                    dispatch({type: "ERROR_OCCURRED", msg: e.response.data.error || "Network Error"});
+                } else if(e.request) {
+                    dispatch({type: "ERROR_OCCURRED", msg: e.request.data.error || "Network Error"});
+                }else {
+                    dispatch({type: "ERROR_OCCURRED", msg: e.message || "Network Error"});
+                }
             }
         }
 
-        if(props.match.url === '/edit') {
+        if(match.url === '/edit') {
             getinitialValues();
+        } else {
+            dispatch({type: 'GOT_RESPONSE', msg: null});
         }
-    }, [props.match.url, props.location.search]);
+    }, [match.url, location.search]);
 
     let handleEditorState = state => setEditorState(state);
     
@@ -175,8 +206,7 @@ const PostEditor = props => {
         let file = e.currentTarget.files[index];
         let reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onloadend = e => { 
-            console.log(e);
+        reader.onloadend = e => {
             dispatch({type: 'THUMBNAIL_UPLOAD', src: [reader.result], image: file}); 
         }
     }
@@ -222,7 +252,7 @@ const PostEditor = props => {
 
             return (
                 <Button
-                key={inline.value}
+                key={Math.random()}
                 type="button"
                 className={className}
                 data-style={inline.style}
@@ -245,7 +275,7 @@ const PostEditor = props => {
 
             return (
                 <Button
-                key={blockType.style}
+                key={Math.random()}
                 type="button"
                 className={className}
                 data-style={blockType.style}
@@ -302,8 +332,14 @@ const PostEditor = props => {
                             </Alert>
                             : null
                         }
+                        { state.err ? 
+                            <Alert variant="danger" show={state.show} onClose={() => dispatch({type: 'ALERT_SEEN'})} dismissible>
+                                {state.msg}
+                            </Alert>
+                            : null
+                        }
                         { state.loading ?
-                            <div className="d-flex justify-content-center align-items-center">
+                            <div className="d-flex justify-content-center align-items-center spinnero">
                                 <Spinner animation="border" size="md"/>
                             </div> :  
                         <Card.Body>
@@ -413,7 +449,6 @@ const PostEditor = props => {
         <Formik enableReinitialize initialValues={{ title: title }} component={AddPostForm} 
         validationSchema={validationSchema} 
         onSubmit={ async (values, actions) => {
-            console.log("submitting");
             try {
                 let token = localStorage.getItem('token');
                 let raw = convertToRaw(editorState.getCurrentContent());
@@ -425,11 +460,11 @@ const PostEditor = props => {
                 fd.append('category', 'games');
                 fd.append('content', content);
                 dispatch({type: 'REQUESTING_DATA'});
-                if(props.match.url === '/edit') {
-                    let response = await axios.put(props.match.url + props.location.search, fd, {headers: {"Authorization": token}});
+                if(match.url === '/edit') {
+                    let response = await axios.put(match.url + location.search, fd, {headers: {"Authorization": token}});
                     dispatch({type: 'GOT_RESPONSE', msg: response.data.msg});
                 } else {
-                    let response = await axios.post(props.match.url, fd, { headers: { "Authorization": token } });
+                    let response = await axios.post(match.url, fd, { headers: { "Authorization": token } });
                     dispatch({type: 'GOT_RESPONSE', msg: response.data.msg});
                 }
                 setEditorState(() => EditorState.createEmpty());
@@ -438,10 +473,16 @@ const PostEditor = props => {
                 dispatch({type: 'THUMBNAIL_UPLOAD', src: null, file: null});
                 actions.resetForm();
             } catch(e) {
-
+                if(e.response) {
+                    dispatch({type: "ERROR_OCCURRED", msg: e.response.data.error || "Network Error"});
+                } else if(e.request) {
+                    dispatch({type: "ERROR_OCCURRED", msg: e.request.data.error || "Network Error"});
+                }else {
+                    dispatch({type: "ERROR_OCCURRED", msg: e.message || "Network Error"});
+                }
             }
         }}/>
     );
 }
 
-export default errorHandler(PostEditor, axios);
+export default PostEditor;

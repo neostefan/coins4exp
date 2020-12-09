@@ -32,7 +32,6 @@ const toggleAlignment = (e, editorState) => {
 }
 
 const toggleVideo = (url, editorState) => {
-    console.log(url);
     const contentState = editorState.getCurrentContent();
     const contentWithEntity = contentState.createEntity('video', 'IMMUTABLE', {src: url});
     const entityKey = contentWithEntity.getLastCreatedEntityKey();

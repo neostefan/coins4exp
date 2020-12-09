@@ -11,9 +11,6 @@ const Styles = Styled.div`
         width: 100%;
         height: 180px;
         box-shadow: 4px 4px 2px ${styles.light};
-        &:hover {
-            cursor: pointer;
-        }
     }
 
     .card .card-img {
@@ -29,16 +26,22 @@ const Styles = Styled.div`
         padding: 8px 3px;
         width: 100%;
     }
+
+    .card-title, .card-text {
+        &:hover {
+            cursor: pointer;
+        }
+    }
 `;
 
 //todo adding tags inside the cards 
 const Post = props => (
-    <Styles onClick={props.redirect}>
+    <Styles>
         <Card className="flex-row mb-4">
             <Image className="card-img" src={props.img}/>
             <Card.Body className="ml-auto d-flex flex-column align-items-center justify-content-center">
-                <Card.Title>{props.title}</Card.Title>
-                <Card.Text>by Author-Nim</Card.Text>
+                <Card.Title onClick={props.redirect}>{props.title}</Card.Title>
+                <Card.Text onClick={props.redirect}>by {props.author}</Card.Text>
                 { 
                     props.url === '/myposts' && props.authorized ?  
                     <div className="d-flex">
@@ -48,7 +51,6 @@ const Post = props => (
                 }                    
             </Card.Body>
         </Card>
-
     </Styles>
 );
 

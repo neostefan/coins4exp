@@ -6,7 +6,7 @@ import Spinner from 'react-bootstrap/Spinner';
 
 import axios from '../axios-inst';
 import errorHandler from '../hoc/errorhandler';
-import { status } from '../store/atoms';
+import status from '../store/atoms';
 
 const Styles = Styled.div`
     width: 100%;
@@ -39,7 +39,7 @@ const Reducer = (state, action) => {
     }
 }
 
-const ThirdPartyAuth = props => {
+const ThirdPartyAuth = () => {
     let setStatus = useSetRecoilState(status);
     let [ state, dispatch ] = React.useReducer(Reducer, { redirect: false, loading: true, url: ''});
 
@@ -49,6 +49,7 @@ const ThirdPartyAuth = props => {
             try {
                 let response = await axios.get('/getAuth');
                 let expirationTime = new Date(new Date().getTime() + response.data.expiresIn * 1000);
+                let timeLimit = response.data.expiresIn;
                 localStorage.setItem('token', response.data.jwt);
                 localStorage.setItem('expires', expirationTime);
                 localStorage.setItem('id', response.data.id);
@@ -56,7 +57,7 @@ const ThirdPartyAuth = props => {
                 setTimeout(() => {
                     localStorage.removeItem('token');
                     localStorage.removeItem('expires');
-                }, response.data.expiresIn * 1000);
+                }, timeLimit * 1000);
                 dispatch({ type: 'FETCHED_AUTH_STATUS', url: response.data.from });
             } catch(e) {
                 dispatch({ type: 'ERROR_OCCURRED' });

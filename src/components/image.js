@@ -48,16 +48,21 @@ const Image = props => {
     let root = React.useRef(null);
 
     React.useEffect(() => {
+        let isMounted = true;
         let observer;
 
         let fetchImage = async () => {
+            dispatch({ type: 'FETCHING_IMAGE' });
             try {
-                dispatch({ type: 'FETCHING_IMAGE' });
                 let response = await axios.get(props.src, { responseType: 'arraybuffer' });
                 let blob = "data:" + response.headers['content-type'] + ";base64," + Buffer.from(response.data, 'binary').toString('base64');
-                dispatch({ type: 'FETCHED_IMAGE', src: blob });
+                if(isMounted) {
+                    dispatch({ type: 'FETCHED_IMAGE', src: blob });
+                }
             } catch(e) {
-                //todo handle an axios error on this end to show our placeholder image
+                if(isMounted) {
+                    dispatch({ type: 'FETCHED_IMAGE', src: img });
+                }
             }
         }
 
@@ -76,6 +81,10 @@ const Image = props => {
         }
 
         observer.observe(root.current);
+
+        return () => {
+            isMounted = false;
+        }
 
     }, [props.src]);
 

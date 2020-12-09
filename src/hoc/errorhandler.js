@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Modal from '../components/modal';
+import Aux from './aux';
 
 const errorHandler = (WrappedComponent, axios) => {
     return class extends Component {
@@ -50,16 +51,17 @@ const errorHandler = (WrappedComponent, axios) => {
         render() {
             if(this.state.hasError) {
                 return (
-                    <div>
+                    <Aux>
                         <Modal show={this.state.show} title="Error" close={this.toggleShow}>
                             <h3>{this.state.status || 500}</h3>
                             <h6>{this.state.errorMsg || 'Network Error'}</h6>
                         </Modal>
                         <WrappedComponent {...this.props}/>
-                    </div>
+                    </Aux>
                 )
+            } else {
+                return (<WrappedComponent {...this.props}/>);
             }
-            return (<WrappedComponent {...this.props}/>);
         }
     }
 }

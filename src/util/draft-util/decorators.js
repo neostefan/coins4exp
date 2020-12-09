@@ -34,7 +34,6 @@ const linkStrategy = (contentBlock, callback, contentState) => {
 const alignStrategy = (contentBlock, callback, contentState) => {
     contentBlock.findEntityRanges(char => {
         const entityKey = char.getEntity();
-        console.log(entityKey);
         return (entityKey !== null && contentState.getEntity(entityKey).getType() === 'ALIGNMENT');
     }, callback);
 }
@@ -62,8 +61,6 @@ const align = props => {
         )
     }
 
-    console.log(type);
-
     if(type === 'center') {
         return (
             <div style={{ textAlign: 'center' }}>
@@ -73,7 +70,6 @@ const align = props => {
     }
 
     if(type === 'left') {
-        console.log("floating " + type);
         return (
             <div style={styles.left}>
                 { props.children }

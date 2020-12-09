@@ -11,7 +11,7 @@ import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
 import Spinner from 'react-bootstrap/Spinner';
 
-import Button from '../components/button';
+import Button from './button';
 import styles from '../themes/theme';
 import axios from '../axios-inst';
 
@@ -86,19 +86,15 @@ const Reducer = (state, action) => {
     }
 };
 
-const SignUp = props => {
-
-    //use alerts to display errors which will have it's own state in here only
+const SignUp = () => {
     let [ state, dispatch ] = React.useReducer(Reducer, { err: null, loading: false, msg: null, show: false });
 
     let validationSchema = Yup.object().shape({
         email: Yup.string().required().trim().email(),
         password: Yup.string().required().trim().matches('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})', 'min of 8 characters and mix of numbers and upper and lowercase letters'),
         username: Yup.string().required().trim(),
-        wallet: Yup.string().required().matches('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})')
+        wallet: Yup.string().required().matches('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})').trim()
     });
-
-    let forgotPasswordHandler = () => props.history.push('/forgot-password')
 
     let submitHandler = async (values, actions) => {
         try {
@@ -183,9 +179,6 @@ const SignUp = props => {
                                     value={values.password}/>
                                     {errors.password && touched.password ? <Form.Text>{errors.password}</Form.Text> : null }
                                 </Form.Group>
-                                <div className="d-flex justify-content-center switch mt-2 mb-2" onClick={forgotPasswordHandler}>
-                                    Forgot Password
-                                </div>
                                 <Button className="signupbtn" type="submit" text='SignUp'/>
                             </Form>
                         </Card.Body>

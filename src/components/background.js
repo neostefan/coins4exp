@@ -1,10 +1,11 @@
 import React from 'react';
 import Styled from 'styled-components';
 import Jumbotron from 'react-bootstrap/Jumbotron';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Navbar from 'react-bootstrap/Navbar';
 
 import img from '../assets/biz2.2.jpg';
+import banner from '../assets/coins4expBanner.png';
 import styles from '../themes/theme';
 import Aux from '../hoc/aux';
 
@@ -16,7 +17,7 @@ const Styles = Styled.div`
         padding: 0;
         top: 0;
         left: 0;
-        border-radius: none;
+        border-radius 0px;
     }
 
     .jumbo-nav {
@@ -62,7 +63,7 @@ const Styles = Styled.div`
     @media(max-width: 750px) {
         .textbox {
             padding-right: 5px;
-            line-height: 35px;
+            line-height: 30px;
             font-size: medium;
             top: 125px;
             right: 5px;
@@ -79,13 +80,16 @@ const Styles = Styled.div`
     }
 `;
 
-const Background = props => {
+const Background = () => {
+    let location = useLocation();
     return  (
         <Styles>
-            { (props.location.pathname === "/") ? 
+            { (location.pathname === "/") ? 
                 <Jumbotron className="jumbo jumbo-base" fluid>
                     <Navbar className="d-flex justify-content-end">
-                        <Navbar.Brand as={Link} to="/">Coin Cryptid</Navbar.Brand>
+                        <Navbar.Brand as={Link} to="/">
+                            <img alt="logo" src={banner}/>
+                        </Navbar.Brand>
                     </Navbar>
                     <Aux>
                         <div className="d-flex textbox">
@@ -97,7 +101,9 @@ const Background = props => {
 
                 <Jumbotron className="jumbo jumbo-nav">
                         <Navbar className="d-flex justify-content-end">
-                        <Navbar.Brand as={Link} to="/">Coin Cryptid</Navbar.Brand>
+                        <Navbar.Brand as={Link} to="/">
+                            <img alt="logo" src={banner}/>
+                        </Navbar.Brand>
                     </Navbar>
                 </Jumbotron>
             }
@@ -105,4 +111,4 @@ const Background = props => {
     );
 }
 
-export default withRouter(Background);
+export default Background;

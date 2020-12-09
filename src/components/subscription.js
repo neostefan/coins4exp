@@ -52,7 +52,6 @@ const Subscription = props =>  {
     );
 
     let submitHandler = (values, actions) => {
-        console.log(values.email);
         actions.resetForm();
         props.close();
     }

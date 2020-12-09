@@ -1,7 +1,6 @@
 const checkAuthStatus = () => {
     let token = localStorage.getItem('token');
-    let expirationTime = localStorage.getItem('expires');
-    let expirationDate = new Date(expirationTime);
+    let expirationDate = new Date(localStorage.getItem('expires'));
 
     if(expirationDate > new Date()) {
         if(token === null) {

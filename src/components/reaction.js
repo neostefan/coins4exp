@@ -11,8 +11,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from '../axios-inst';
 import styles from '../themes/theme';
 import Modal from './modal';
-import LogIn from '../containers/login';
-import { status } from '../store/atoms';
+import LogIn from './login';
+import status from '../store/atoms';
 import errorHandler from '../hoc/errorhandler';
 
 const Styles = Styled(Container)`
@@ -64,10 +64,6 @@ const Reactions = props => {
 
     let voteHandler = (type) => {
         let sponsor = props.reaction.voters.find(sponsor => sponsor === auth.writerId);
-
-        console.log(auth.writerId);
-        console.log(sponsor);
-        console.log(auth.isLoggedIn);
 
         // * checking if user is authorized
         if(auth.isLoggedIn) {

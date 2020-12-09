@@ -5,6 +5,4 @@ const status = atom({
     default: {isLoggedIn: false, writerId: 1}
 });
 
-export {
-    status
-}
+export default status;

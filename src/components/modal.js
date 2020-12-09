@@ -6,6 +6,9 @@ import Button from './button';
 import styles from '../themes/theme';
 
 const Styled = styled(Modal)`
+    left: calc(25vw/2);
+    width: 75%;
+
     .modal-body {
         display: flex;
         flex-direction: column;

@@ -3,7 +3,7 @@ import Styled from 'styled-components';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { useSetRecoilState } from 'recoil';
-import { withRouter } from 'react-router-dom';
+import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -14,11 +14,11 @@ import Spinner from 'react-bootstrap/Spinner';
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import Button from '../components/button';
-import Brbutton from '../components/brand-btn';
+import Button from './button';
+import Brbutton from './brand-btn';
 import styles from '../themes/theme';
 import axios from '../axios-inst';
-import { status } from '../store/atoms';
+import status from '../store/atoms';
 
 const Styling = Styled(Container)`
     .card {
@@ -91,6 +91,10 @@ const Reducer = (state, action) => {
 };
 
 const LogIn = props => {
+    let history = useHistory();
+    let match = useRouteMatch();
+    let location = useLocation();
+    let url = match.url + location.search;
     let [ state, dispatch ] = React.useReducer(Reducer, { err: null, loading: false, msg: null, show: false });
     let setStatus = useSetRecoilState(status);
 
@@ -101,7 +105,7 @@ const LogIn = props => {
 
     let googleHandler = async () => {
         try {
-            let response = await axios.post('/auth', { url: props.match.url + props.location.search });
+            let response = await axios.post('/auth', { url: url });
             if(response.data.msg) {
                 window.open("http://localhost:5000/auth", "_self");
             }
@@ -117,12 +121,12 @@ const LogIn = props => {
         
     }
 
-    let submitHandler = async (values, actions) => {
+    let submitHandler = async (values) => {
         try {
             dispatch({type: 'REQUESTING_DATA'});
             let response = await axios.post('/login', values);
-            console.log(response.data);
             let expirationTime = new Date(new Date().getTime() + response.data.expiresIn * 1000);
+            let timeLimit = response.data.expiresIn;
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('expires', expirationTime);
             localStorage.setItem('id', response.data.writer);
@@ -130,7 +134,8 @@ const LogIn = props => {
             setTimeout(() => {
                 localStorage.removeItem('token');
                 localStorage.removeItem('expires');
-            }, response.data.expiresIn * 1000);
+                setStatus({isLoggedIn: false, writerId: 1});
+            }, timeLimit * 1000);
             props.close();
         } catch (e) {
             if(e.response) {
@@ -180,7 +185,7 @@ const LogIn = props => {
                                 <Form.Group>
                                     <Form.Label>Password</Form.Label>
                                     <Form.Control 
-                                    placeholder="Create a password"
+                                    placeholder="Enter your password"
                                     name="password"
                                     type="password"
                                     onChange={handleChange('password')}
@@ -191,7 +196,11 @@ const LogIn = props => {
                                 <Brbutton className="signupbtn" type="button" text="Sign In With Google" click={googleHandler}>
                                     <FontAwesomeIcon icon={faGoogle}/>
                                 </Brbutton>
-                                <div className="d-flex justify-content-center switch mt-2 mb-2" onClick={() => props.history.push('/forgot-password')}>
+                                <div className="d-flex justify-content-center switch mt-2 mb-2" onClick={() => {
+                                        history.push('/forgot-password');
+                                        props.close();
+                                    }
+                                }>
                                     Forgot Password
                                 </div>
                                 <Button className="signupbtn" type="submit" text='Log In'/>
@@ -206,11 +215,11 @@ const LogIn = props => {
 
     return (
         <Formik 
-        initialValues={{email: "", username: ""}} 
+        initialValues={{email: "", password: ""}} 
         component={component}
         onSubmit={submitHandler}
         validationSchema={validationSchema}/>        
     );
 }
 
-export default withRouter(LogIn);
+export default LogIn;
